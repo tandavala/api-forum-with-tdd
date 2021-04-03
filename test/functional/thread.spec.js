@@ -24,10 +24,9 @@ test('authorized user can create threads', async ({ client }) => {
 });
 
 test('authorized user can delete threads', async ({ assert, client }) => {
-  const user = await Factory.model('App/Models/User').create();
   const thread = await Factory.model('App/Models/Thread').create();
-
-  const response = await client.delete(`threads/${thread.id}`).loginVia(user).send().end();
+  const owner = await thread.user().first();
+  const response = await client.delete(thread.url()).send().loginVia(owner).end();
   assert.equal(await Thread.getCount(), 0);
   response.assertStatus(204);
 });
@@ -45,4 +44,11 @@ test('unauthenticated user cannot delete threads', async ({ client }) => {
   const thread = await Factory.model('App/Models/Thread').create();
   const response = await client.delete(thread.url()).send().end();
   response.assertStatus(401);
+});
+
+test('thread can not be deleted by a user who did not create it', async ({ client }) => {
+  const thread = await Factory.model('App/Models/Thread').create();
+  const notOwner = await Factory.model('App/Models/User').create();
+  const response = await client.delete(thread.url()).send().loginVia(notOwner).end();
+  response.assertStatus(403);
 });
