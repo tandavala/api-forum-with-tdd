@@ -14,9 +14,10 @@
 /** @type {import('@adonisjs/lucid/src/Factory')} */
 const Factory = use('Factory');
 
-Factory.blueprint('App/Models/Thread', (faker) => ({
+Factory.blueprint('App/Models/Thread', async (faker) => ({
   title: faker.word(),
   body: faker.paragraph(),
+  user_id: (await Factory.model('App/Models/User').create()).id,
 }));
 
 Factory.blueprint('App/Models/User', (faker) => ({

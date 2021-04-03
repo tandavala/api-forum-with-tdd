@@ -8,20 +8,22 @@ trait('Auth/Client');
 trait('Test/ApiClient');
 trait('DatabaseTransactions');
 
-test('can create threads', async ({ client }) => {
+test('authorized user can create threads', async ({ client }) => {
   const user = await Factory.model('App/Models/User').create();
-  const response = await client.post('/threads').loginVia(user).send({
+  const attributes = {
     title: 'test title',
     body: 'body',
-  }).end();
-
+  };
+  const response = await client.post('/threads').loginVia(user).send(attributes).end();
+  console.log(response.error);
   response.assertStatus(200);
 
   const thread = await Thread.firstOrFail();
   response.assertJSON({ thread: thread.toJSON() });
+  response.assertJSONSubset({ thread: { ...attributes, user_id: user.id } });
 });
 
-test('can delete threads', async ({ assert, client }) => {
+test('authorized user can delete threads', async ({ assert, client }) => {
   const user = await Factory.model('App/Models/User').create();
   const thread = await Factory.model('App/Models/Thread').create();
 
