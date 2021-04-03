@@ -18,3 +18,9 @@ Factory.blueprint('App/Models/Thread', (faker) => ({
   title: faker.word(),
   body: faker.paragraph(),
 }));
+
+Factory.blueprint('App/Models/User', (faker) => ({
+  username: faker.username(),
+  email: faker.email(),
+  password: '123456',
+}));

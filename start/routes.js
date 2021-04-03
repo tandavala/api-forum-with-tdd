@@ -18,4 +18,4 @@ const Route = use('Route');
 
 Route.get('/', () => ({ greeting: 'Hello world in JSON' }));
 
-Route.resource('threads', 'ThreadController').only(['store', 'destroy']);
+Route.resource('threads', 'ThreadController').only(['store', 'destroy']).middleware('auth');
