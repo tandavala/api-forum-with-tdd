@@ -15,7 +15,7 @@ test('authorized user can create threads', async ({ client }) => {
     body: 'body',
   };
   const response = await client.post('/threads').loginVia(user).send(attributes).end();
-  console.log(response.error);
+
   response.assertStatus(200);
 
   const thread = await Thread.firstOrFail();
@@ -38,5 +38,11 @@ test('unauthenticated user cannot create threads', async ({ client }) => {
     body: 'this a body',
   }).end();
 
+  response.assertStatus(401);
+});
+
+test('unauthenticated user cannot delete threads', async ({ client }) => {
+  const thread = await Factory.model('App/Models/Thread').create();
+  const response = await client.delete(thread.url()).send().end();
   response.assertStatus(401);
 });
