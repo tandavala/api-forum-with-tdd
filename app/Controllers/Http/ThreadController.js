@@ -18,6 +18,13 @@ class ThreadController {
 
     return response.status(204).json({ message: 'thread delete' });
   }
+
+  async update({ request, params, response }) {
+    const thread = await Thread.findOrFail(params.id);
+    thread.merge(request.only(['title', 'body']));
+    await thread.save();
+    return response.json({ thread });
+  }
 }
 
 module.exports = ThreadController;

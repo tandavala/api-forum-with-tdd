@@ -52,3 +52,23 @@ test('thread can not be deleted by a user who did not create it', async ({ clien
   const response = await client.delete(thread.url()).send().loginVia(notOwner).end();
   response.assertStatus(403);
 });
+
+test('authorized user can update title and body of thread', async ({ assert, client }) => {
+  const thread = await Factory.model('App/Models/Thread').create();
+  const owner = await thread.user().first();
+  const attributes = { title: 'new title', body: 'new body' };
+  const updatedThreadAttributes = { ...thread.toJSON(), ...attributes };
+
+  const response = await client.put(thread.url()).loginVia(owner).send(attributes).end();
+  await thread.reload();
+
+  response.assertStatus(200);
+  response.assertJSON({ thread: thread.toJSON() });
+  assert.deepEqual(thread.toJSON(), updatedThreadAttributes);
+});
+
+test('unathenticated user cannot update threads', async ({ client }) => {
+  const thread = await Factory.model('App/Models/Thread').create();
+  const response = await client.put(thread.url()).send().end();
+  response.assertStatus(401);
+});
