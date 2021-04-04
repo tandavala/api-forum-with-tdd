@@ -19,6 +19,7 @@ const Route = use('Route');
 Route.get('/', () => ({ greeting: 'Hello world in JSON' }));
 
 Route.group(() => {
+  Route.get('', 'ThreadController.index');
   Route.post('', 'ThreadController.store').middleware('auth').validator('StoreThread');
   Route.get(':id', 'ThreadController.show');
   Route.put(':id', 'ThreadController.update').middleware('auth', 'modifyThreadPolicy').validator('StoreThread');

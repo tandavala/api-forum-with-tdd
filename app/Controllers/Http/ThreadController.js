@@ -3,6 +3,11 @@
 const Thread = use('App/Models/Thread');
 
 class ThreadController {
+  async index({ response }) {
+    const threads = await Thread.all();
+    return response.status(200).json({ threads });
+  }
+
   async store({ request, response, auth }) {
     const thread = await auth.user.threads().create(request.only(['title', 'body']));
 

@@ -119,3 +119,13 @@ test('can access single resource', async ({ client }) => {
   response.assertStatus(200);
   response.assertJSON({ thread: thread.toJSON() });
 });
+
+test('can access all resources', async ({ client }) => {
+  const threads = await Factory.model('App/Models/Thread').createMany(3);
+  const response = await client.get('threads').send().end();
+  console.log(response.error);
+  response.assertStatus(200);
+  response.assertJSON({
+    threads: threads.map((thread) => thread.toJSON()).sort((a, b) => a.id - b.id),
+  });
+});
