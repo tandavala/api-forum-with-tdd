@@ -1,6 +1,7 @@
 'use strict';
 
 const Thread = use('App/Models/Thread');
+const fetch = require('node-fetch');
 
 class ThreadController {
   async index({ response }) {

@@ -8,21 +8,6 @@ trait('Auth/Client');
 trait('Test/ApiClient');
 trait('DatabaseTransactions');
 
-test('authorized user can create threads', async ({ client }) => {
-  const user = await Factory.model('App/Models/User').create();
-  const attributes = {
-    title: 'test title',
-    body: 'body',
-  };
-  const response = await client.post('/threads').loginVia(user).send(attributes).end();
-
-  response.assertStatus(200);
-
-  const thread = await Thread.firstOrFail();
-  response.assertJSON({ thread: thread.toJSON() });
-  response.assertJSONSubset({ thread: { ...attributes, user_id: user.id } });
-});
-
 test('authorized user can delete threads', async ({ assert, client }) => {
   const thread = await Factory.model('App/Models/Thread').create();
   const owner = await thread.user().first();
@@ -84,17 +69,6 @@ test('thread can not be update by a user who did not create it', async ({ client
 test('can not create thread with no body', async ({ client }) => {
   const user = await Factory.model('App/Models/User').create();
   const response = await client.post('/threads').loginVia(user).send({ title: 'test title' }).end();
-
-  response.assertStatus(400);
-});
-
-test('can not create a thread with no body or title', async ({ client }) => {
-  const user = await Factory.model('App/Models/User').create();
-  let response = await client.post('/threads').loginVia(user).send({ title: 'teste title' }).end();
-
-  response.assertStatus(400);
-
-  response = await client.post('/threads').loginVia(user).send({ body: 'body now' }).end();
 
   response.assertStatus(400);
 });
