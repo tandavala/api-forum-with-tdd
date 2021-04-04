@@ -112,3 +112,10 @@ test('can not update thread with no body or title', async ({ client }) => {
   response.assertStatus(400);
   response.assertJSONSubset([{ message: 'required validation failed on title' }]);
 });
+
+test('can access single resource', async ({ client }) => {
+  const thread = await Factory.model('App/Models/Thread').create();
+  const response = await client.get(thread.url()).send().end();
+  response.assertStatus(200);
+  response.assertJSON({ thread: thread.toJSON() });
+});

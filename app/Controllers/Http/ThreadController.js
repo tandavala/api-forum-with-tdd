@@ -9,6 +9,11 @@ class ThreadController {
     return response.json({ thread });
   }
 
+  async show({ params, response }) {
+    const thread = await Thread.findOrFail(params.id);
+    return response.status(200).json({ thread });
+  }
+
   async destroy({ params, response }) {
     const thread = await Thread.findOrFail(params.id);
 

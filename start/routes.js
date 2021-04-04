@@ -20,6 +20,7 @@ Route.get('/', () => ({ greeting: 'Hello world in JSON' }));
 
 Route.group(() => {
   Route.post('', 'ThreadController.store').middleware('auth').validator('StoreThread');
+  Route.get(':id', 'ThreadController.show');
   Route.put(':id', 'ThreadController.update').middleware('auth', 'modifyThreadPolicy').validator('StoreThread');
   Route.delete(':id', 'ThreadController.destroy').middleware('auth', 'modifyThreadPolicy');
 }).prefix('threads');
