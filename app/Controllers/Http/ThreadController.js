@@ -19,8 +19,14 @@ class ThreadController {
     return response.status(204).json({ message: 'thread delete' });
   }
 
-  async update({ request, params, response }) {
+  async update({
+    request, params, response, auth,
+  }) {
     const thread = await Thread.findOrFail(params.id);
+
+    if (thread.user_id !== auth.user.id) {
+      return response.forbidden();
+    }
     thread.merge(request.only(['title', 'body']));
     await thread.save();
     return response.json({ thread });

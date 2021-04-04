@@ -72,3 +72,11 @@ test('unathenticated user cannot update threads', async ({ client }) => {
   const response = await client.put(thread.url()).send().end();
   response.assertStatus(401);
 });
+
+test('thread can not be update by a user who did not create it', async ({ client }) => {
+  const thread = await Factory.model('App/Models/Thread').create();
+  const notOwner = await Factory.model('App/Models/User').create();
+
+  const response = await client.put(thread.url()).send().loginVia(notOwner).end();
+  response.assertStatus(403);
+});
