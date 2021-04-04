@@ -20,8 +20,9 @@ Factory.blueprint('App/Models/Thread', async (faker) => ({
   user_id: (await Factory.model('App/Models/User').create()).id,
 }));
 
-Factory.blueprint('App/Models/User', (faker) => ({
+Factory.blueprint('App/Models/User', (faker, i, data) => ({
   username: faker.username(),
   email: faker.email(),
   password: '123456',
+  ...data,
 }));

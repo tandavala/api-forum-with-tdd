@@ -30,3 +30,10 @@ test('creator of the thread can modify it', async ({ client }) => {
 
   response.assertStatus(200);
 });
+
+test('moderator can modify threads', async ({ client }) => {
+  const moderator = await Factory.model('App/Models/User').create({ type: 1 });
+  const thread = await Factory.model('App/Models/Thread').create();
+  const response = await client.post(`test/modify-thread-policy/${thread.id}`).loginVia(moderator).send().end();
+  response.assertStatus(200);
+});

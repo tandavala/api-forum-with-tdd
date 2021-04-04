@@ -123,9 +123,17 @@ test('can access single resource', async ({ client }) => {
 test('can access all resources', async ({ client }) => {
   const threads = await Factory.model('App/Models/Thread').createMany(3);
   const response = await client.get('threads').send().end();
-  console.log(response.error);
+
   response.assertStatus(200);
   response.assertJSON({
     threads: threads.map((thread) => thread.toJSON()).sort((a, b) => a.id - b.id),
   });
+});
+
+test('moderator can delete threads', async ({ assert, client }) => {
+  const moderator = await Factory.model('App/Models/User').create({ type: 1 });
+  const thread = await Factory.model('App/Models/Thread').create();
+  const response = await client.delete(thread.url()).send().loginVia(moderator).end();
+  response.assertStatus(204);
+  assert.equal(await Thread.getCount(), 0);
 });
